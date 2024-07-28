@@ -1,0 +1,14 @@
+{
+  "name": "queuecrew",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "pnpm run --parallel -r dev",
+    "build": "pnpm run --parallel -r build",
+    "start": "cd packages/server && pnpm start"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
