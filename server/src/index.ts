@@ -1,8 +1,12 @@
 import { Hono } from 'hono';
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
+import authRoutes from './routes/auth';
 
 const app = new Hono();
+
+// Auth
+app.route('/api/auth', authRoutes);
 
 // API routes
 app.get('/api', (c) => c.json({ message: 'Hello from QueueCrew API!' }));
