@@ -3,6 +3,7 @@ import { drizzle } from 'drizzle-orm/libsql';
 import { eq } from 'drizzle-orm';
 import { users } from '../models/schema';
 import jwt from 'jsonwebtoken';
+import { nanoid } from 'nanoid';
 
 const DISCORD_API_BASE_URL = 'https://discord.com/api/v10';
 
@@ -60,7 +61,9 @@ export async function handleDiscordCallback(code: string) {
       avatarUrl: `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`,
     }).where(eq(users.id, userId));
   } else {
+    const newUserId = nanoid()
     const result = await db.insert(users).values({
+      id: newUserId,
       discordId: discordUser.id,
       username: discordUser.username,
       avatarUrl: `https://cdn.discordapp.com/avatars/${discordUser.id}/${discordUser.avatar}.png`,
