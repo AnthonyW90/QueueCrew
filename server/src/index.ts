@@ -1,9 +1,18 @@
 import { Hono } from 'hono';
+import { cors } from 'hono/cors'
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import authRoutes from './routes/auth';
+import dotenv from 'dotenv';
+
+dotenv.config()
 
 const app = new Hono();
+
+app.use('*', cors({
+  origin: ['http://localhost:5173'],
+  credentials: true
+}))
 
 // Auth
 app.route('/api/auth', authRoutes);
