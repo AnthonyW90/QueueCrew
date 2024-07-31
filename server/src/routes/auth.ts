@@ -5,14 +5,11 @@ import { setCookie } from 'hono/cookie';
 const authRoutes = new Hono();
 
 authRoutes.get('/discord', async (c) => {
-  console.log('inside /discord call')
   const authURL = await getDiscordAuthURL();
-  console.log({ authURL })
   return c.json(authURL);
 });
 
 authRoutes.get('/discord/callback', async (c) => {
-  console.log('inside /discord/callback', {c})
   const code = c.req.query('code');
   if (!code) {
     return c.json({ error: 'Missing authorization code' }, 400);
@@ -20,7 +17,8 @@ authRoutes.get('/discord/callback', async (c) => {
 
   try {
     await handleDiscordCallback(c, code);
-    return c.redirect('/'); // Redirect to the frontend after successful authentication
+    // Update to more dynamic later
+    return c.redirect('http://localhost:5173'); // Redirect to the frontend after successful authentication
   } catch (error) {
     console.error('Error during Discord callback:', error);
     return c.json({ error: 'Authentication failed' }, 500);

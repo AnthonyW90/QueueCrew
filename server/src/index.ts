@@ -15,6 +15,7 @@ app.use('*', cors({
 }))
 
 // Auth
+
 app.route('/api/auth', authRoutes);
 
 // API routes

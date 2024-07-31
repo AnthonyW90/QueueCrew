@@ -28,38 +28,34 @@ export async function getDiscordAuthURL(){
 
 export async function handleDiscordCallback(c: Context, code: string) {
   // Exchange code for token
-  console.log('inside handleDiscordCallback', {c, code})
   const tokenResponse = await fetch(`${DISCORD_API_BASE_URL}/oauth2/token`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    headers: { 
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Accept-Encoding': 'application/x-www-form-urlencoded'
+    },
     body: new URLSearchParams({
       client_id: process.env.DISCORD_CLIENT_ID!,
       client_secret: process.env.DISCORD_CLIENT_SECRET!,
       grant_type: 'authorization_code',
       code,
       redirect_uri: `${process.env.APP_URL}/api/auth/discord/callback`,
-    }),
+    })
   });
-  console.log(`${process.env.APP_URL}/api/auth/discord/callback`)
-  console.log(1)
+
   const tokenData = await tokenResponse.json();
-  console.log({tokenData})
   
   // Get user info
   const userResponse = await fetch(`${DISCORD_API_BASE_URL}/users/@me`, {
     headers: { Authorization: `Bearer ${tokenData.access_token}` },
   });
-  console.log(2)
   
   const discordUser: DiscordUser = await userResponse.json();
-  console.log({discordUser})
   
-  // Create or update user in database
-  const db = drizzle(createClient({ url: process.env.TURSO_DATABASE_URL! }));
-  console.log(3)
+  // // Create or update user in database
+  const db = drizzle(createClient({ url: process.env.TURSO_DATABASE_URL!, authToken: process.env.TURSO_AUTH_TOKEN }));
   
   const existingUser = await db.select().from(users).where(eq(users.discordId, discordUser.id));
-  console.log(4)
   
   let userId: string;
   
@@ -79,7 +75,7 @@ export async function handleDiscordCallback(c: Context, code: string) {
     }).returning({ insertedId: users.id });
     userId = result[0].insertedId;
   }
-  console.log(5)
+
   // Generate JWT
   const token = jwt.sign({ userId }, process.env.JWT_SECRET!, { expiresIn: '7d' });
   
@@ -92,6 +88,5 @@ export async function handleDiscordCallback(c: Context, code: string) {
     path: '/'
   })
   
-  console.log(6)
   return { success: true };
 }  
