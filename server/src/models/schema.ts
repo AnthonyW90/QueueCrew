@@ -14,3 +14,11 @@ export const groups = sqliteTable('groups', {
   name: text('name').notNull(),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`now()`)
 })
+
+export const userGroups = sqliteTable('user_groups', {
+  userId: text('user_id').notNull().references(() => users.id),
+  groupId: text('group_id').notNull().references(() => groups.id),
+  role: text('role', { enum: ['admin', 'member'] }).notNull().default('member'),
+}, (table) => ({
+  pk: primaryKey({ columns: [table.userId, table.groupId] })
+}))
