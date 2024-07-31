@@ -5,7 +5,7 @@ dotenv.config();
 
 export default {
   schema: './src/models/schema.ts',
-  out: './migrations',
+  out: './src/db/migrations',
   driver: 'turso',
   dialect: "sqlite",
   dbCredentials: {
