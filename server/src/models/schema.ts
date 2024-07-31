@@ -31,3 +31,10 @@ export const gameSuggestions = sqliteTable('game_suggestions', {
   userId: text('user_id').notNull().references(() => users.id),
   createdAt: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`now()`)
 })
+
+export const votes = sqliteTable('votes', {
+  id: text('id').primaryKey(),
+  gameSuggestionId: text('game_suggestion_id').notNull().references(() => gameSuggestions.id),
+  userId: text('user_id').notNull().references(() => users.id),
+  created_at: integer('created_at', { mode: 'timestamp' }).notNull().default(sql`now()`)
+})
