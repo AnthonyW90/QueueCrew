@@ -1,9 +1,11 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors'
+import { jwt } from 'hono/jwt'
 import { serve } from '@hono/node-server';
 import { serveStatic } from '@hono/node-server/serve-static';
 import authRoutes from './routes/auth';
 import dotenv from 'dotenv';
+import userRoutes from './routes/users'
 
 dotenv.config()
 
@@ -14,12 +16,12 @@ app.use('*', cors({
   credentials: true
 }))
 
-// Auth
-
+// Public Routes
 app.route('/api/auth', authRoutes);
 
-// API routes
-app.get('/api', (c) => c.json({ message: 'Hello from QueueCrew API!' }));
+// Protected Routes
+app.use('/api/*', jwt({ secret: process.env.JWT_SECRET! }));
+app.route('/api/users', userRoutes)
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
