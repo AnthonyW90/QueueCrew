@@ -1,18 +1,8 @@
-import { createClient } from '@libsql/client';
-import { drizzle } from 'drizzle-orm/libsql';
 import { migrate } from 'drizzle-orm/libsql/migrator';
-import dotenv from 'dotenv';
+import { db } from './db'
 
-dotenv.config();
 
 async function runMigrations() {
-  const client = createClient({
-    url: process.env.TURSO_DATABASE_URL!,
-    authToken: process.env.TURSO_AUTH_TOKEN,
-  });
-
-  const db = drizzle(client);
-
   console.log('Running migrations...');
 
   try {
@@ -27,8 +17,6 @@ async function runMigrations() {
     if (typeof error === 'object' && error !== null && 'cause' in error) {
       console.error('Error cause:', (error as { cause: unknown }).cause);
     }
-  } finally {
-    await client.close();
   }
 }
 
